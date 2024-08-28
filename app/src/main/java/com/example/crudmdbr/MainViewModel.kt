@@ -1,5 +1,8 @@
 package com.example.crudmdbr
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.crudmdbr.ui.theme.data.models.Address
@@ -7,6 +10,7 @@ import com.example.crudmdbr.ui.theme.data.models.Course
 import com.example.crudmdbr.ui.theme.data.models.Student
 import com.example.crudmdbr.ui.theme.data.models.Teacher
 import io.realm.kotlin.UpdatePolicy
+import io.realm.kotlin.delete
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,7 +19,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class MainViewModel: ViewModel() {
-    private var realm = MyApp.realm
+    private val realm = MyApp.realm
 
     val course = realm
         .query<Course>()
@@ -28,6 +32,21 @@ class MainViewModel: ViewModel() {
             SharingStarted.WhileSubscribed(),
             emptyList()
         )
+
+    var courseDetails: Course? by mutableStateOf(null)
+        private set
+
+   /* init {
+        createSampleEntries()
+    }*/
+
+    fun showCourseDet(course: Course){
+        courseDetails=course
+    }
+    fun hideCourseDet(){
+        courseDetails=null
+    }
+
 
     private fun createSampleEntries() {
         viewModelScope.launch {
@@ -152,6 +171,16 @@ class MainViewModel: ViewModel() {
                 copyToRealm(student3, updatePolicy = UpdatePolicy.ALL)
                 copyToRealm(student4, updatePolicy = UpdatePolicy.ALL)
 
+            }
+        }
+    }
+    fun DeleteCourse(){
+        viewModelScope.launch {
+            realm.write {
+                var course = courseDetails ?: return@write
+                var latest = findLatest(course) ?: return@write
+                delete(latest)
+                courseDetails=null
             }
         }
     }

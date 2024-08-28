@@ -8,23 +8,25 @@ import com.example.crudmdbr.ui.theme.data.models.Teacher
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 
-class MyApp: Application() {
+class MyApp : Application() {
 
-    companion object{
-        lateinit var realm: Realm
-    }
-
-    override fun onCreate(){
-        super.onCreate()
-        realm = Realm.open(
-            configuration = RealmConfiguration.create(
-                schema = setOf(
-                    Address::class,
-                    Teacher::class,
-                    Course::class,
-                    Student::class
+    companion object {
+        val realm: Realm by lazy {
+            Realm.open(
+                configuration = RealmConfiguration.create(
+                    schema = setOf(
+                        Address::class,
+                        Teacher::class,
+                        Course::class,
+                        Student::class
+                    )
                 )
             )
-        )
+        }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        realm
     }
 }

@@ -8,7 +8,7 @@ import org.mongodb.kbson.ObjectId
 
 class Teacher : RealmObject {
 
-    @PrimaryKey val _id: ObjectId = ObjectId()
+    @PrimaryKey var _id: ObjectId = ObjectId()
     var address: Address? = null
     var courses: RealmList<Course> = realmListOf()
 }
